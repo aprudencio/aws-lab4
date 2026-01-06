@@ -46,7 +46,7 @@ jobs:
         run: |
           sam build
           sam deploy \
-            --stack-name coderoad-lab-4 \
+            --stack-name coderoad-lab-4-aprudencio \
             --region us-east-1 \
             --capabilities CAPABILITY_IAM \
             --resolve-s3 \
@@ -57,6 +57,10 @@ jobs:
         run: |
           pytest tests/unit_test.py
 
+      - name: Run Integration tests
+        run: |
+          pytest tests/integration_test.py
+
       #- name: Cleanup - Delete CloudFormation Stack
       #  run: |
-      #    aws cloudformation delete-stack --stack-name coderoad-lab-3
+      #    aws cloudformation delete-stack --stack-name coderoad-lab-4-aprudencio

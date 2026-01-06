@@ -5,7 +5,9 @@ from botocore.exceptions import ClientError
 
 s3_client = boto3.client('s3')
 BUCKET_NAME = os.environ['BUCKET_NAME']
-URL_EXPIRATION_SECONDS = 300  # 5 minutes
+UPLOAD_URL_EXPIRATION_SECONDS = 5*60  # 5 minutes
+DOWNLOAD_URL_EXPIRATION_SECONDS = 60*60  # 1 hour
+
 
 def lambda_handler(event, context):
     """
@@ -43,7 +45,7 @@ def handle_upload(event):
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
             Params={'Bucket': BUCKET_NAME, 'Key': filename},
-            ExpiresIn=URL_EXPIRATION_SECONDS
+            ExpiresIn=UPLOAD_URL_EXPIRATION_SECONDS
         )
         
         return {
@@ -51,7 +53,7 @@ def handle_upload(event):
             'body': json.dumps({
                 'upload_url': presigned_url,
                 'filename': filename,
-                'expires_in': URL_EXPIRATION_SECONDS
+                'expires_in': UPLOAD_URL_EXPIRATION_SECONDS
             })
         }
         
@@ -87,7 +89,7 @@ def handle_download(event):
         presigned_url = s3_client.generate_presigned_url(
             'get_object',
             Params={'Bucket': BUCKET_NAME, 'Key': key},
-            ExpiresIn=URL_EXPIRATION_SECONDS
+            ExpiresIn=DOWNLOAD_URL_EXPIRATION_SECONDS
         )
         print(f"Generated download URL: {presigned_url}")
         
