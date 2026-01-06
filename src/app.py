@@ -3,7 +3,12 @@ import os
 import boto3
 from botocore.config import Config
 
-s3_client = boto3.client('s3', config=Config(signature_version='s3v4'), region_name=os.environ.get('AWS_REGION_ENV') or 'us-east-1')
+# Get the region from Lambda's AWS_REGION or fallback to env var
+region = os.environ.get('AWS_REGION') or os.environ.get('AWS_REGION_ENV') or 'us-east-1'
+s3_client = boto3.client('s3', region_name=region, config=Config(
+    signature_version='s3v4',
+    s3={'addressing_style': 'path'}
+))
 BUCKET_NAME = os.environ['BUCKET_NAME']
 UPLOAD_URL_EXPIRATION_SECONDS = 5*60  # 5 minutes
 DOWNLOAD_URL_EXPIRATION_SECONDS = 60*60  # 1 hour
