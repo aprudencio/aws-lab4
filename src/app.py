@@ -3,7 +3,7 @@ import os
 import boto3
 from botocore.config import Config
 
-s3_client = boto3.client('s3', config=Config(signature_version='s3v4'), region_name=os.environ['AWS_REGION'])
+s3_client = boto3.client('s3', config=Config(signature_version='s3v4'), region_name=os.environ.get('AWS_REGION') or 'us-east-1')
 BUCKET_NAME = os.environ['BUCKET_NAME']
 UPLOAD_URL_EXPIRATION_SECONDS = 5*60  # 5 minutes
 DOWNLOAD_URL_EXPIRATION_SECONDS = 60*60  # 1 hour
@@ -54,8 +54,7 @@ def handle_upload(event):
             'put_object',
             Params={
                 'Bucket': BUCKET_NAME, 
-                'Key': filename,
-                'ContentType': 'application/octet-stream'
+                'Key': filename
             },
             ExpiresIn=UPLOAD_URL_EXPIRATION_SECONDS
         )
