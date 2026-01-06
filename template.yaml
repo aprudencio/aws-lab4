@@ -25,7 +25,7 @@ Resources:
       Environment:
         Variables:
           BUCKET_NAME: !Ref FileStorageBucket
-          AWS_REGION: !Ref AWS::Region
+          AWS_REGION_ENV: !Ref AWS::Region
       Policies:
         - S3CrudPolicy:
             BucketName: !Ref FileStorageBucket
