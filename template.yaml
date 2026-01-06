@@ -8,7 +8,7 @@ Resources:
   FileStorageBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "file-gateway-storage-${AWS::AccountId}-${AWS::Region}"
+      BucketName: !Sub "cr4-aprudencio-file-gateway-storage-${AWS::AccountId}-${AWS::Region}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
