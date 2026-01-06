@@ -7,10 +7,10 @@ import json
 from dotenv import load_dotenv
 load_dotenv()
 STACK_NAME = os.getenv("STACK_NAME") or "coderoad-lab-4-aprudencio"
-REGION = os.getenv("REGION") or "us-east-1"
+AWS_REGION = os.getenv("AWS_REGION") or "us-east-1"
 
 def get_stack_outputs():
-    client = boto3.client("cloudformation", region_name=REGION)
+    client = boto3.client("cloudformation", region_name=AWS_REGION)
     try:
         response = client.describe_stacks(StackName=STACK_NAME)
     except Exception as e:

@@ -14,8 +14,8 @@ jobs:
       - name: Configure AWS credentials via OICD
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{vars.AWS_ACCOUNT_ID}}:role/github_aprudencio_role
-          aws-region: us-east-1
+          role-to-assume: ${{vars.AWS_OIDC_ROLE_ARN}}
+          aws-region: ${{vars.AWS_REGION ?? 'us-east-1'}}
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,12 +46,19 @@ jobs:
         run: |
           sam build
           sam deploy \
-            --stack-name coderoad-lab-4-aprudencio \
-            --region us-east-1 \
+            --stack-name ${{vars.STACK_NAME ?? 'coderoad-lab-4-aprudencio'}} \
+            --region ${{vars.AWS_REGION ?? 'us-east-1'}} \
             --capabilities CAPABILITY_IAM \
             --resolve-s3 \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
+
+      - name: Get API Gateway URL for manual testing
+        run: |
+          aws cloudformation describe-stacks \
+            --stack-name ${{vars.STACK_NAME ?? 'coderoad-lab-4-aprudencio'}} \
+            --query 'Stacks[0].Outputs[?OutputKey==`FileGatewayApi`].OutputValue' \
+            --output text
 
       - name: Run Unit tests
         run: |
