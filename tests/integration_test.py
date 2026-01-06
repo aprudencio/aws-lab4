@@ -47,7 +47,7 @@ def test_upload_and_download_file(api_url):
     if not os.path.exists(file_path):
         pytest.fail(f"Test asset not found at {file_path}")
 
-    with open(file_path, "r") as f:
+    with open(file_path, "rb") as f:
         file_content = f.read()
 
     # 1. Get Upload URL
