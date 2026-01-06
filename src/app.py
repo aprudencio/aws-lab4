@@ -3,7 +3,7 @@ import os
 import boto3
 from botocore.config import Config
 
-s3_client = boto3.client('s3', config=Config(signature_version='s3v4'))
+s3_client = boto3.client('s3', config=Config(signature_version='s3v4'), region_name=os.environ['AWS_REGION'])
 BUCKET_NAME = os.environ['BUCKET_NAME']
 UPLOAD_URL_EXPIRATION_SECONDS = 5*60  # 5 minutes
 DOWNLOAD_URL_EXPIRATION_SECONDS = 60*60  # 1 hour
@@ -14,7 +14,14 @@ def lambda_handler(event, context):
     Lambda handler for File Gateway service.
     Handles POST /files (Upload) and GET /files/{key} (Download).
     """
-    http_method = event['httpMethod']
+    print(json.dumps(event)) # Log the event for debugging
+    http_method = event.get('httpMethod')
+    
+    if not http_method:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'message': 'Missing httpMethod in event'})
+        }
     
     if http_method == 'POST':
         return handle_upload(event)
