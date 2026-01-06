@@ -63,7 +63,10 @@ jobs:
       - name: Run Unit tests
         run: |
           pytest tests/unit_test.py
-
+      - name: Set STACK_NAME and AWS_REGION environment variables for integration tests
+        run: |
+          echo "STACK_NAME=${{vars.STACK_NAME || 'coderoad-lab-4-aprudencio'}}" >> $GITHUB_ENV
+          echo "AWS_REGION=${{vars.AWS_REGION || 'us-east-1'}}" >> $GITHUB_ENV
       - name: Run Integration tests
         run: |
           pytest tests/integration_test.py
