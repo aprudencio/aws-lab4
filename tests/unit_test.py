@@ -13,6 +13,7 @@ mock_botocore = MagicMock()
 sys.modules['boto3'] = mock_boto3
 sys.modules['botocore'] = mock_botocore
 sys.modules['botocore.exceptions'] = mock_botocore.exceptions
+sys.modules['botocore.config'] = MagicMock()
 
 # Set env var before import
 os.environ['BUCKET_NAME'] = 'test-bucket'
@@ -42,7 +43,7 @@ class TestFileGateway(unittest.TestCase):
         
         mock_s3.generate_presigned_url.assert_called_with(
             'put_object',
-            Params={'Bucket': self.bucket_name, 'Key': 'test.txt'},
+            Params={'Bucket': self.bucket_name, 'Key': 'test.txt', 'ContentType': 'application/octet-stream'},
             ExpiresIn=300
         )
 
