@@ -63,7 +63,7 @@ class TestFileGateway(unittest.TestCase):
         mock_s3.generate_presigned_url.assert_called_with(
             'get_object',
             Params={'Bucket': self.bucket_name, 'Key': 'test.txt'},
-            ExpiresIn=300
+            ExpiresIn=3600
         )
 
 if __name__ == '__main__':
