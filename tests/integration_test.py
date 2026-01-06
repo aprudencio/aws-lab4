@@ -51,7 +51,7 @@ def test_upload_and_download_file(api_url):
         file_content = f.read()
 
     # 1. Get Upload URL
-    upload_endpoint = f"{api_url}/files"
+    upload_endpoint = f"{api_url}"
     print(f"Requesting upload URL from: {upload_endpoint}")
     
     response = requests.post(upload_endpoint, json={"filename": filename})
@@ -71,7 +71,7 @@ def test_upload_and_download_file(api_url):
     assert upload_response.status_code == 200, f"Upload failed: {upload_response.status_code} {upload_response.text}"
 
     # 3. Download File
-    download_endpoint = f"{api_url}/files/{filename}"
+    download_endpoint = f"{api_url}/{filename}"
     print(f"Downloading file from: {download_endpoint}")
     
     # Allow redirects
