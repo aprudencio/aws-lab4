@@ -89,6 +89,7 @@ def handle_download(event):
             Params={'Bucket': BUCKET_NAME, 'Key': key},
             ExpiresIn=URL_EXPIRATION_SECONDS
         )
+        print(f"Generated download URL: {presigned_url}")
         
         # Return a 302 Redirect to the presigned URL
         return {
