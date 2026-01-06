@@ -78,5 +78,5 @@ def test_upload_and_download_file(api_url):
     download_response = requests.get(download_endpoint, allow_redirects=True)
     assert download_response.status_code == 200, f"Download failed: {download_response.status_code} {download_response.text}"
     
-    downloaded_content = download_response.text
+    downloaded_content = download_response.content
     assert downloaded_content == file_content, "Downloaded content does not match uploaded content"
