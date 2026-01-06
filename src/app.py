@@ -1,9 +1,9 @@
 import json
 import os
 import boto3
-from botocore.exceptions import ClientError
+from botocore.config import Config
 
-s3_client = boto3.client('s3')
+s3_client = boto3.client('s3', config=Config(signature_version='s3v4'))
 BUCKET_NAME = os.environ['BUCKET_NAME']
 UPLOAD_URL_EXPIRATION_SECONDS = 5*60  # 5 minutes
 DOWNLOAD_URL_EXPIRATION_SECONDS = 60*60  # 1 hour
@@ -42,9 +42,14 @@ def handle_upload(event):
             }
             
         # Generate a presigned URL for the S3 PUT operation
+        # Set ContentType to ensure consistency between client and server
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
-            Params={'Bucket': BUCKET_NAME, 'Key': filename},
+            Params={
+                'Bucket': BUCKET_NAME, 
+                'Key': filename,
+                'ContentType': 'application/octet-stream'
+            },
             ExpiresIn=UPLOAD_URL_EXPIRATION_SECONDS
         )
         

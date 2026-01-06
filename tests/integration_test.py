@@ -65,7 +65,7 @@ def test_upload_and_download_file(api_url):
     print(f"Uploading file to: {upload_url}")
     
     # try sending raw bytes.
-    headers = {"Content-Type": ""} 
+    headers = {"Content-Type": "application/octet-stream"} 
     
     upload_response = requests.put(upload_url, data=file_content, headers=headers)
     assert upload_response.status_code == 200, f"Upload failed: {upload_response.status_code} {upload_response.text}"
