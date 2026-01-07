@@ -2,6 +2,7 @@ import json
 import os
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 
 # Get the region from Lambda's AWS_REGION or fallback to env var
 region = os.environ.get('AWS_REGION') or os.environ.get('AWS_REGION_ENV') or 'us-east-1'
@@ -101,6 +102,18 @@ def handle_download(event):
                 'statusCode': 400,
                 'body': json.dumps({'message': 'Missing file key in path'})
             }
+
+        # Check if file exists
+        try:
+            s3_client.head_object(Bucket=BUCKET_NAME, Key=key)
+        except ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps({'message': 'File not found'})
+                }
+            else:
+                raise e
 
         # Generate a presigned URL for the S3 GET operation
         presigned_url = s3_client.generate_presigned_url(

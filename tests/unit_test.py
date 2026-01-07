@@ -15,6 +15,15 @@ sys.modules['botocore'] = mock_botocore
 sys.modules['botocore.exceptions'] = mock_botocore.exceptions
 sys.modules['botocore.config'] = MagicMock()
 
+# Define a real exception class for mocking
+class MockClientError(Exception):
+    def __init__(self, response, operation_name):
+        self.response = response
+        self.operation_name = operation_name
+
+mock_botocore.exceptions.ClientError = MockClientError
+ClientError = MockClientError
+
 # Set env var before import
 os.environ['BUCKET_NAME'] = 'test-bucket'
 
@@ -66,6 +75,24 @@ class TestFileGateway(unittest.TestCase):
             Params={'Bucket': self.bucket_name, 'Key': 'test.txt'},
             ExpiresIn=3600
         )
+        mock_s3.head_object.assert_called_with(Bucket=self.bucket_name, Key='test.txt')
+
+    @patch('app.s3_client')
+    def test_download_file_not_found(self, mock_s3):
+        # Mock head_object to raise 404 ClientError
+        error_response = {'Error': {'Code': '404', 'Message': 'Not Found'}}
+        mock_s3.head_object.side_effect = ClientError(error_response, 'HeadObject')
+        
+        event = {
+            'httpMethod': 'GET',
+            'pathParameters': {'key': 'nonexistent.txt'}
+        }
+        
+        response = lambda_handler(event, None)
+        
+        self.assertEqual(response['statusCode'], 404)
+        body = json.loads(response['body'])
+        self.assertEqual(body['message'], 'File not found')
 
 if __name__ == '__main__':
     unittest.main()
