@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     Handles POST /files (Upload) and GET /files/{key} (Download).
     """
     print("Event: ", json.dumps(event)) # Log the event for debugging
-    print("Context: ", json.dumps(context)) # Log the context for debugging
+    print("Context: ", context) # Log the context for debugging
     http_method = event.get('httpMethod')
     
     if not http_method:

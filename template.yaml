@@ -4,6 +4,15 @@ Description: >
   File Gateway Service
   Simple, secure way for users to upload and download files without exposing S3 bucket publicly.
 
+Globals:
+  Api:
+    MethodSettings:
+      - ResourcePath: "/*"
+        HttpMethod: "*"
+        LoggingLevel: INFO
+        DataTraceEnabled: true
+        MetricsEnabled: true
+
 Resources:
   # Lambda layer for shared Python dependencies
   PythonDependenciesLayer:

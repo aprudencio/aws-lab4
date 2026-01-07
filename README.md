@@ -44,7 +44,14 @@ Response:
 
 **GET** `/files/{key}`
 
-Redirects (307) to a temporary presigned S3 URL. The status code 307 is preferred because it explicitly guarantees that the HTTP method (GET) remains unchanged when following the redirect. Additionally, it aligns with S3's own routing.
+Request Parameters:
+
+- `key`: The key of the file to download.
+
+Response:
+
+It redirects (307) to a temporary presigned S3 URL. The status code 307 is preferred because it explicitly guarantees that the HTTP method (GET) remains unchanged when following the redirect. Additionally, it aligns with S3's own routing.
+The response body is empty.
 
 ## Deployment
 
