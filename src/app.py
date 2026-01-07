@@ -107,8 +107,12 @@ def handle_download(event):
         try:
             s3_client.head_object(Bucket=BUCKET_NAME, Key=key)
         except ClientError as e:
+            print(f"DEBUG: ClientError: {e}")
+            print(f"DEBUG: Response: {e.response}")
             error_code = e.response.get('Error', {}).get('Code')
-            if error_code == "404" or error_code == "NoSuchKey":
+            http_status = e.response.get('ResponseMetadata', {}).get('HTTPStatusCode')
+            
+            if error_code == "404" or error_code == "NoSuchKey" or http_status == 404:
                 return {
                     'statusCode': 404,
                     'body': json.dumps({'message': 'File not found'})
