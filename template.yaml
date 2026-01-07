@@ -5,6 +5,15 @@ Description: >
   Simple, secure way for users to upload and download files without exposing S3 bucket publicly.
 
 Resources:
+  # Lambda layer for shared Python dependencies
+  PythonDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: file-gateway-python-deps
+      ContentUri: src/python_deps/
+      CompatibleRuntimes:
+        - python3.11
+
   FileStorageBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -15,20 +24,42 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
+  FileGatewayFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: S3CrudPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource:
+                  - !Sub "arn:aws:s3:::${FileStorageBucket}/*"
+
   FileGatewayFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
       Handler: app.lambda_handler
       Runtime: python3.11
+      Layers:
+        - !Ref PythonDependenciesLayer
       Timeout: 10
       Environment:
         Variables:
           BUCKET_NAME: !Ref FileStorageBucket
           AWS_REGION_ENV: !Ref AWS::Region
-      Policies:
-        - S3CrudPolicy:
-            BucketName: !Ref FileStorageBucket
+      Role: !GetAtt FileGatewayFunctionRole.Arn
       Events:
         UploadFile:
           Type: Api
