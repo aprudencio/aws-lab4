@@ -109,9 +109,9 @@ def handle_download(event):
         )
         print(f"Generated download URL: {presigned_url}")
         
-        # Return a 302 Redirect to the presigned URL
+        # Return a 307 Temporary Redirect to the presigned URL
         return {
-            'statusCode': 302,
+            'statusCode': 307,
             'headers': {
                 'Location': presigned_url
             },

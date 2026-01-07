@@ -58,7 +58,7 @@ class TestFileGateway(unittest.TestCase):
         
         response = lambda_handler(event, None)
         
-        self.assertEqual(response['statusCode'], 302)
+        self.assertEqual(response['statusCode'], 307)
         self.assertEqual(response['headers']['Location'], 'https://s3.amazonaws.com/download-url')
         
         mock_s3.generate_presigned_url.assert_called_with(
