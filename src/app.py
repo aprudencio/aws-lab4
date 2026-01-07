@@ -19,7 +19,8 @@ def lambda_handler(event, context):
     Lambda handler for File Gateway service.
     Handles POST /files (Upload) and GET /files/{key} (Download).
     """
-    print(json.dumps(event)) # Log the event for debugging
+    print("Event: ", json.dumps(event)) # Log the event for debugging
+    print("Context: ", json.dumps(context)) # Log the context for debugging
     http_method = event.get('httpMethod')
     
     if not http_method:
