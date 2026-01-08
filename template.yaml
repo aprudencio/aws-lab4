@@ -4,6 +4,7 @@ Description: >
   File Gateway Service
   Simple, secure way for users to upload and download files without exposing S3 bucket publicly.
 
+# Define global settings for API Gateway to enable CloudWatch logging and metrics
 Globals:
   Api:
     MethodSettings:
@@ -14,7 +15,7 @@ Globals:
         MetricsEnabled: true
 
 Resources:
-  # Lambda layer for shared Python dependencies
+  # Lambda layer for shared Python dependencies in case we need to have two lambda functions in the future
   PythonDependenciesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -23,6 +24,7 @@ Resources:
       CompatibleRuntimes:
         - python3.13
 
+  # IAM role for API Gateway to push logs to CloudWatch
   ApiGatewayPushToCloudWatchRole:
     Type: AWS::IAM::Role
     Properties:
@@ -37,11 +39,13 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
 
+  # Set the CloudWatch role for API Gateway
   ApiGatewayAccount:
     Type: AWS::ApiGateway::Account
     Properties:
       CloudWatchRoleArn: !GetAtt ApiGatewayPushToCloudWatchRole.Arn
 
+  # S3 bucket for file storage
   FileStorageBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -56,6 +60,10 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
 
+  # IAM role for File Gateway function
+  # ListBucket permission needed to validate if a file exists in S3
+  # PutObject permission needed to upload a file to S3
+  # GetObject permission needed to download a file from S3
   FileGatewayFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -82,6 +90,7 @@ Resources:
                   - !Sub "arn:aws:s3:::${FileStorageBucket}/*"
                   - !Sub "arn:aws:s3:::${FileStorageBucket}"
 
+  # Lambda function for File Gateway which can handle upload and download requests
   FileGatewayFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -111,6 +120,9 @@ Resources:
             RequestParameters:
               - method.request.path.key
 
+# Output: API Gateway endpoint URL for Prod stage for File Gateway function
+# Output: S3 Bucket Name
+# These are needed during the Github Actions workflow to run the integration tests
 Outputs:
   FileGatewayApi:
     Description: "API Gateway endpoint URL for Prod stage for File Gateway function"
