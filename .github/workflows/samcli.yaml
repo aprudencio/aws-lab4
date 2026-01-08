@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
       - name: Install dependencies
         run: |
@@ -38,9 +38,9 @@ jobs:
 
       - name: Build Lambda Layer
         run: |
-          mkdir -p src/python_deps/python/lib/python3.11/site-packages
+          mkdir -p src/python_deps/python/lib/python3.13/site-packages
           pip install -r src/python_deps/requirements.txt \
-            -t src/python_deps/python/lib/python3.11/site-packages
+            -t src/python_deps/python/lib/python3.13/site-packages
 
       - name: Build SAM Application
         run: |
