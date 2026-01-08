@@ -91,6 +91,8 @@ You can use `curl` to test the endpoints.
 
 ### Manual testing
 
+#### cURL
+
 **Upload:**
 
 ```bash
@@ -108,6 +110,15 @@ curl -X PUT '<upload_url>' --upload-file test.txt
 # Download file (follows redirect)
 curl -L -O https://<api-id>.execute-api.<region>.amazonaws.com/Prod/files/test.txt
 ```
+
+#### Postman
+
+A Postman collection is provided in `docs/postman_collection.json`.
+Just import it to Postman and replace the `{{generated API gateway URL}}` with your API gateway URL.
+
+Then you can run the collection to test the endpoints. The upload URL will be populated automatically in the collection variables so you only need to choose a file to upload and run the upload request.
+
+For the download request, you can just run it with the file name you want to download.
 
 ### Integration Tests
 

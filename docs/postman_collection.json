@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "207b675a-56c6-4145-ad99-a86061965830",
+		"name": "Aprudencio File Gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28580471"
+	},
+	"item": [
+		{
+			"name": "Get Upload URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"upload_url returned\", function () {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.upload_url).to.not.be.empty;\r",
+							"    pm.expect(jsonData.expires_in).to.equal(300);\r",
+							"    pm.collectionVariables.set(\"upload_url\",jsonData.upload_url);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filename\":\"test.txt\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{generated API gateway URL}}",
+					"host": [
+						"{{generated API gateway URL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload File",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/aprud/Downloads/delete/incoming/tiny.jpg"
+					}
+				},
+				"url": {
+					"raw": "{{upload_url}}",
+					"host": [
+						"{{upload_url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download file",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{generated API gateway URL}}/test.txt",
+					"host": [
+						"{{generated API gateway URL}}"
+					],
+					"path": [
+						"test.txt"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "upload_url",
+			"value": ""
+		},
+		{
+			"key": "generated API gateway URL",
+			"value": ""
+		}
+	]
+}
