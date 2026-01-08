@@ -109,8 +109,7 @@ Resources:
             Path: /files/{key}
             Method: get
             RequestParameters:
-              - method.request.path.key:
-                  Required: true
+              - method.request.path.key
 
 Outputs:
   FileGatewayApi:
