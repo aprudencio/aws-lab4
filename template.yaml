@@ -9,8 +9,8 @@ Globals:
     MethodSettings:
       - ResourcePath: "/*"
         HttpMethod: "*"
-        LoggingLevel: INFO
-        DataTraceEnabled: true
+        LoggingLevel: ERROR
+        DataTraceEnabled: false
         MetricsEnabled: true
 
 Resources:
@@ -21,7 +21,7 @@ Resources:
       LayerName: file-gateway-python-deps
       ContentUri: src/python_deps/
       CompatibleRuntimes:
-        - python3.11
+        - python3.13
 
   ApiGatewayPushToCloudWatchRole:
     Type: AWS::IAM::Role
@@ -51,6 +51,10 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
 
   FileGatewayFunctionRole:
     Type: AWS::IAM::Role
@@ -83,7 +87,8 @@ Resources:
     Properties:
       CodeUri: src/
       Handler: app.lambda_handler
-      Runtime: python3.11
+      Runtime: python3.13
+      MemorySize: 256
       Layers:
         - !Ref PythonDependenciesLayer
       Timeout: 10
@@ -103,6 +108,9 @@ Resources:
           Properties:
             Path: /files/{key}
             Method: get
+            RequestParameters:
+              - method.request.path.key:
+                  Required: true
 
 Outputs:
   FileGatewayApi:
